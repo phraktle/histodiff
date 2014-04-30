@@ -49,6 +49,12 @@ java -jar histodiff.jar file1 file2 [sortBy] [threshold]
 Get, Build, Install
 -------------------
 
+Get a pre-built executable jar here:
+
+https://github.com/phraktle/histodiff/releases/download/v0.1/histodiff-0.1.jar
+
+Or build from source:
+
 ```
 git clone https://github.com/phraktle/histodiff.git
 cd histodiff
