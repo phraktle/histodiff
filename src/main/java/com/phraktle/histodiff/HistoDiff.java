@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,27 +20,27 @@ public class HistoDiff {
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
             System.out
-                    .println("Usage: HistoDiff file1 file2 [sortBy] [cutoff]");
+                    .println("Usage: HistoDiff file1 file2 [sortBy] [threshold]");
             System.exit(1);
         }
         File file1 = new File(args[0]);
         File file2 = new File(args[1]);
         int sortBy = parseArg(args, 2);
-        int cutoff = parseArg(args, 3);
+        int threshold = parseArg(args, 3);
 
         dump(sort(sortBy,
-                filter(sortBy, cutoff, diff(parse(file1), parse(file2)))));
+                filter(sortBy, threshold, diff(parse(file1), parse(file2)))));
     }
 
     static int parseArg(String[] args, int idx) {
         return args.length <= idx ? 0 : Integer.parseInt(args[idx]);
     }
 
-    static List<Entry<String, int[]>> filter(int byIndex, int cutoff,
+    static List<Entry<String, int[]>> filter(int byIndex, int threshold,
             List<Entry<String, int[]>> histo) {
         List<Entry<String, int[]>> filtered = new ArrayList<>();
         for (Entry<String, int[]> e : histo) {
-            if (Math.abs(e.getValue()[byIndex]) > cutoff) {
+            if (Math.abs(e.getValue()[byIndex]) > threshold) {
                 filtered.add(e);
             }
         }
