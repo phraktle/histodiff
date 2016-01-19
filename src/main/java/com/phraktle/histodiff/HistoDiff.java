@@ -54,10 +54,10 @@ public class HistoDiff {
         return args.length <= idx ? 0 : Integer.parseInt(args[idx]);
     }
 
-    static List<Entry<String, int[]>> filter(int byIndex, int threshold,
-            List<Entry<String, int[]>> histo) {
-        List<Entry<String, int[]>> filtered = new ArrayList<>();
-        for (Entry<String, int[]> e : histo) {
+    static List<Entry<String, long[]>> filter(int byIndex, int threshold,
+            List<Entry<String, long[]>> histo) {
+        List<Entry<String, long[]>> filtered = new ArrayList<>();
+        for (Entry<String, long[]> e : histo) {
             if (Math.abs(e.getValue()[byIndex]) > threshold) {
                 filtered.add(e);
             }
@@ -65,11 +65,11 @@ public class HistoDiff {
         return filtered;
     }
 
-    static List<Entry<String, int[]>> sort(final int byIndex,
-            List<Entry<String, int[]>> histo) {
-        Collections.sort(histo, new Comparator<Entry<String, int[]>>() {
-            public int compare(Entry<String, int[]> a, Entry<String, int[]> b) {
-                return -Integer.compare(a.getValue()[byIndex],
+    static List<Entry<String, long[]>> sort(final int byIndex,
+            List<Entry<String, long[]>> histo) {
+        Collections.sort(histo, new Comparator<Entry<String, long[]>>() {
+            public int compare(Entry<String, long[]> a, Entry<String, long[]> b) {
+                return -Long.compare(a.getValue()[byIndex],
                         b.getValue()[byIndex]);
             }
 
@@ -77,28 +77,28 @@ public class HistoDiff {
         return histo;
     }
 
-    static void dump(List<Entry<String, int[]>> diff) {
+    static void dump(List<Entry<String, long[]>> diff) {
         System.out.println("  #instances       #bytes  class name");
         System.out.println("-------------------------------------");
-        for (Entry<String, int[]> e : diff) {
-            int[] v = e.getValue();
+        for (Entry<String, long[]> e : diff) {
+            long[] v = e.getValue();
             System.out.printf("%+12d %+12d  %s%n", v[0], v[1], e.getKey());
         }
     }
 
-    static Map<String, int[]> parse(File file) throws IOException {
+    static Map<String, long[]> parse(File file) throws IOException {
         Pattern p = Pattern.compile(" *(\\d+): +([\\d]+) +([\\d]+) +(.+)");
-        Map<String, int[]> map = new HashMap<>();
+        Map<String, long[]> map = new HashMap<>();
         try (BufferedReader r = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = r.readLine()) != null) {
                 Matcher matcher = p.matcher(line);
                 if (matcher.matches()) {
 
-                    int instances = Integer.parseInt(matcher.group(2));
-                    int bytes = Integer.parseInt(matcher.group(3));
+                    long instances = Long.parseLong(matcher.group(2));
+                    long bytes = Long.parseLong(matcher.group(3));
                     String className = matcher.group(4);
-                    map.put(className, new int[] { instances, bytes });
+                    map.put(className, new long[] { instances, bytes });
 
                 }
             }
@@ -106,40 +106,40 @@ public class HistoDiff {
         return map;
     }
 
-    static List<Entry<String, int[]>> diff(Map<String, int[]> histo1,
-            Map<String, int[]> histo2) {
+    static List<Entry<String, long[]>> diff(Map<String, long[]> histo1,
+            Map<String, long[]> histo2) {
 
-        List<Entry<String, int[]>> diff = new ArrayList<>();
+        List<Entry<String, long[]>> diff = new ArrayList<>();
 
-        for (Entry<String, int[]> e : histo1.entrySet()) {
+        for (Entry<String, long[]> e : histo1.entrySet()) {
             String c = e.getKey();
-            int[] a = e.getValue();
-            int[] b = histo2.remove(c);
+            long[] a = e.getValue();
+            long[] b = histo2.remove(c);
             diff.add(newEntry(c, diff(a, b)));
         }
 
         // remaining in histo2 were not in histo1
-        for (Entry<String, int[]> e : histo2.entrySet()) {
+        for (Entry<String, long[]> e : histo2.entrySet()) {
             String c = e.getKey();
-            int[] b = e.getValue();
+            long[] b = e.getValue();
             diff.add(newEntry(c, diff(null, b)));
         }
 
         return diff;
     }
 
-    static Entry<String, int[]> newEntry(String c, int[] diff) {
+    static Entry<String, long[]> newEntry(String c, long[] diff) {
         return new AbstractMap.SimpleEntry<>(c, diff);
     }
 
-    static int[] diff(int[] a, int[] b) {
+    static long[] diff(long[] a, long[] b) {
         if (a == null) {
             return b;
         }
         if (b == null) {
-            b = new int[a.length];
+            b = new long[a.length];
         }
-        int[] diff = new int[a.length];
+        long[] diff = new long[a.length];
         for (int i = 0; i < a.length; i++) {
             diff[i] = b[i] - a[i];
         }
