@@ -42,8 +42,9 @@ Usage
 java -jar histodiff.jar file1 file2 [sortBy] [threshold]
 ```
 
- * `sortBy` – 0 (default) to sort results by number of instances, 1 to sort by bytes
- * `threshold` – change in the corresponding dimension has to be above this (0 by default, which means types with no changes in instance counts are omitted)
+ * `file`: path to a file or an URL
+ * `sortBy`: 0 (default) to sort results by number of instances, 1 to sort by bytes
+ * `threshold`: change in the corresponding dimension has to be above this (0 by default, which means types with no changes in instance counts are omitted)
 
 
 Get, Build, Install
@@ -51,7 +52,7 @@ Get, Build, Install
 
 Get a pre-built executable jar here:
 
-https://github.com/phraktle/histodiff/releases/download/v0.1/histodiff-0.1.jar
+https://github.com/phraktle/histodiff/releases/download/v0.2/histodiff-0.2.jar
 
 Or build from source:
 
@@ -59,7 +60,7 @@ Or build from source:
 git clone https://github.com/phraktle/histodiff.git
 cd histodiff
 gradlew jar
-cp build/libs/histodiff-0.1.jar ~/bin/histodiff.jar
+cp build/libs/histodiff-0.2.jar ~/bin/histodiff.jar
 ```
 
 
