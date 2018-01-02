@@ -37,16 +37,17 @@ public class HistoDiff {
     }
 
     static File parseFileArg(String[] args, int idx) throws IOException {
-        if (args[idx].startsWith("http://")) {
-            File targetFile = File.createTempFile("histodiff-temp-file-", ".tmp");
-            targetFile.deleteOnExit();
-            URL httpTarget = new URL(args[idx]);
-            try (InputStream in = httpTarget.openStream()) {
-                Files.copy(in, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        String location = args[idx];
+        if (location.startsWith("http://") || location.startsWith("https://")) {
+            File file = File.createTempFile("histodiff", ".tmp");
+            file.deleteOnExit();
+            URL url = new URL(location);
+            try (InputStream in = url.openStream()) {
+                Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
-            return targetFile;
+            return file;
         } else {
-            return new File(args[idx]);
+            return new File(location);
         }
     }
 
