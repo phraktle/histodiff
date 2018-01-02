@@ -9,9 +9,9 @@ public class HistoDiffTest {
 
     @Test
     public void testDiff() {
-        int[] pos = new int[] { 1, 2 };
-        int[] zero = new int[] { 0, 0 };
-        int[] neg = new int[] { -1, -2 };
+        long[] pos = new long[] { 1, 2 };
+        long[] zero = new long[] { 0, 0 };
+        long[] neg = new long[] { -1, -2 };
         assertArrayEquals(zero, diff(pos, pos));
         assertArrayEquals(pos, diff(zero, pos));
         assertArrayEquals(neg, diff(pos, zero));
