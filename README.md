@@ -39,12 +39,13 @@ Usage
 -----
 
 ```
-java -jar histodiff.jar file1 file2 [sortBy] [threshold]
+java [-DtrustAllHttpsCerts=true] -jar histodiff.jar file1 file2 [sortBy] [threshold]
 ```
 
  * `file`: path to a file or an URL
  * `sortBy`: 0 (default) to sort results by number of instances, 1 to sort by bytes
  * `threshold`: change in the corresponding dimension has to be above this (0 by default, which means types with no changes in instance counts are omitted)
+ * `-DtrustAllHttpsCerts=true`: this option explicitly allows histodiff to perform "insecure" HTTPS connections and transfers
 
 
 Get, Build, Install
