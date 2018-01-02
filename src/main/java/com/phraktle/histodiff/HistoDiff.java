@@ -3,7 +3,11 @@ package com.phraktle.histodiff;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,16 +24,30 @@ public class HistoDiff {
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
             System.out
-                    .println("Usage: HistoDiff file1 file2 [sortBy] [threshold]");
+                    .println("Usage: HistoDiff file1/url1 file2/url2 [sortBy] [threshold]");
             System.exit(1);
         }
-        File file1 = new File(args[0]);
-        File file2 = new File(args[1]);
+        File file1 = parseFileArg(args, 0);
+        File file2 = parseFileArg(args, 1);
         int sortBy = parseArg(args, 2);
         int threshold = parseArg(args, 3);
 
         dump(sort(sortBy,
                 filter(sortBy, threshold, diff(parse(file1), parse(file2)))));
+    }
+
+    static File parseFileArg(String[] args, int idx) throws IOException {
+        if (args[idx].startsWith("http://")) {
+            File targetFile = File.createTempFile("histodiff-temp-file-", ".tmp");
+            targetFile.deleteOnExit();
+            URL httpTarget = new URL(args[idx]);
+            try (InputStream in = httpTarget.openStream()) {
+                Files.copy(in, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+            return targetFile;
+        } else {
+            return new File(args[idx]);
+        }
     }
 
     static int parseArg(String[] args, int idx) {
