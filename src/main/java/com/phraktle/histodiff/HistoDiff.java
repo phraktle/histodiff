@@ -18,15 +18,26 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.security.GeneralSecurityException;
+import java.security.cert.X509Certificate;
 
 public class HistoDiff {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, GeneralSecurityException {
         if (args.length < 2) {
             System.out
                     .println("Usage: HistoDiff file1/url1 file2/url2 [sortBy] [threshold]");
             System.exit(1);
         }
+
+        if ( Boolean.getBoolean("trustAllHttpsCerts") ) {
+            trustAllHttpsCerts();
+        }
+
         File file1 = parseFileArg(args, 0);
         File file2 = parseFileArg(args, 1);
         int sortBy = parseArg(args, 2);
@@ -34,6 +45,21 @@ public class HistoDiff {
 
         dump(sort(sortBy,
                 filter(sortBy, threshold, diff(parse(file1), parse(file2)))));
+    }
+
+    static void trustAllHttpsCerts() throws GeneralSecurityException {
+        HttpsURLConnection.setDefaultHostnameVerifier ((hostname, session) -> true);
+
+        TrustManager[] trustAllCerts = new TrustManager[] {
+            new X509TrustManager() {
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() { return null; }
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {  }
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {  }
+            }
+        };
+        SSLContext sc = SSLContext.getInstance("SSL");
+        sc.init(null, trustAllCerts, new java.security.SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
     }
 
     static File parseFileArg(String[] args, int idx) throws IOException {
